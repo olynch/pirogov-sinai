@@ -23,37 +23,31 @@ end
   - sum(cell * y for y in hood) + is.h * cell
 end
 
-struct GibbsRule{R,W,N,P <: AbstractPotential,K,B} <: NeighborhoodRule{R,W}
-  neighborhood::N
+struct GibbsRule{P <: AbstractPotential,K,B}
   p::P
   states::SVector{K,Int}
   β::B
 end
 
-function GibbsRule{R,W}(neighborhood::N, p::P, states::SVector{K,Int}, β::B) where
-    {R,W, N,P <: AbstractPotential,K,B}
-  GibbsRule{R,W,N,P,K,B}(neighborhood, p, states, β)
-end
-
-function GibbsRule{R,W}(p, states) where {R,W}
-  GibbsRule{R,W}(Moore(1), p, states, Param(1., bounds=(0.,1.)))
-end
-
-function _setbuffer(gr::GibbsRule{R,W,N,P,K}, buffer) where {R,W,N,P,K}
-  hood = _setbuffer(gr.neighborhood, buffer)
-  GibbsRule{R,W,N,P}(hood, gr.p, gr.states)
-end
-
-function DynamicGrids.applyrule(data, r::GibbsRule, state, I)
+@inline function (r::GibbsRule)(hood,cell)
   proposal = rand(r.states)
-  weight = exp(-r.β * H(r.p, neighbors(r), proposal))
+  weight = exp(-r.β * H(r.p, hood, proposal))
   if weight >= rand()
     proposal
   else
-    state
+    cell
   end
 end
 
-rule = GibbsRule(Ising(), SVector{2}([-1,1]))
+rule1 = Neighbors{:lattice, :lattice}(
+  GibbsRule(BlumeCapel(),SVector{3}([-1,0,1]),Param(0.5; bounds=(0.0,1.0))))
+
+rule2 = Neighbors{:lattice, :boundaries}() do hood, cell
+  if all(hood .== cell)
+    0
+  else
+    1
+  end
+end
 
 end

@@ -2,11 +2,14 @@ using DynamicGrids, DynamicGridsInteract, ColorSchemes, Colors, Blink
 
 include("GibbsSim.jl")
 
-init = rand([-1,0,1], 200, 200)
+init = (
+  lattice = rand([-1,0,1], 150, 150),
+  boundaries = zeros(Int, 150, 150)
+)
 
 GREY = colorant"red"
-WHITE = colorant"white"
-BLACK = colorant"black"
+WHITE = colorant"purple"
+BLACK = colorant"green"
 
 struct RWB
 end
@@ -22,8 +25,8 @@ function Base.get(::RWB,i)
 end
 
 
-output = ElectronOutput(init;
-                        ruleset=Ruleset(GibbsSim.rule),
+output = ElectronOutput(init,
+                        ruleset=Ruleset(GibbsSim.rule1, GibbsSim.rule2; boundary=Wrap()),
                         tspan=1:5000,
                         font="sans",
                         text=nothing,
