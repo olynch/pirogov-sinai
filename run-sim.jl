@@ -7,20 +7,20 @@ init = (
   boundaries = zeros(Int, 150, 150)
 )
 
-GREY = colorant"red"
-WHITE = colorant"purple"
-BLACK = colorant"green"
+ZERO_COLOR = colorant"grey"
+NEGONE_COLOR = colorant"#48ecff"
+PLUSONE_COLOR = colorant"#C70039"
 
 struct RWB
 end
 
 function Base.get(::RWB,i)
   if i==-1
-    WHITE
+    NEGONE_COLOR
   elseif i==0
-    GREY
+    ZERO_COLOR
   else
-    BLACK
+    PLUSONE_COLOR
   end
 end
 

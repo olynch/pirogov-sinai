@@ -40,7 +40,7 @@ end
 end
 
 rule1 = Neighbors{:lattice, :lattice}(
-  GibbsRule(BlumeCapel(),SVector{3}([-1,0,1]),Param(0.5; bounds=(0.0,1.0))))
+  GibbsRule(BlumeCapel(), SVector{3}([-1,0,1]), Param(0.5; bounds=(0.0,1.0))))
 
 rule2 = Neighbors{:lattice, :boundaries}() do hood, cell
   if all(hood .== cell)
